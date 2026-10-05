@@ -72,7 +72,7 @@ footer{display:flex;justify-content:center;gap:8px;margin-top:36px;padding-top:1
 (async()=>{
  const $=id=>document.getElementById(id);
  try{
-  const engine=await loadNongliEngine("./data/nongli.json?v=20261006-1");
+  const engine=await loadNongliEngine("./data/nongli.json?v=20261006-2");
   const data=engine.data;
   function renderKnowledge(){
     $("backbone").innerHTML=data.backbone.map(x=>'<div class="fact"><b>'+x.name+' · '+x.role+'</b><span>'+x.detail+'</span></div>').join("");
