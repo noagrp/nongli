@@ -27,10 +27,10 @@ h1{margin:0;color:var(--moon);font-size:clamp(28px,4vw,42px)}.sub{margin:5px 0 0
 .cell{padding:8px 10px;min-width:0}.cell+.cell{border-left:1px solid rgba(143,180,201,.14)}.label{display:block;margin-bottom:6px;color:#8297a4;font-size:11px;letter-spacing:.12em}.main{font-size:clamp(23px,3vw,31px);font-weight:800}.minor{margin-top:5px;color:#91a2ac;font-size:12px;line-height:1.55}
 .intro{margin:0 0 22px;padding:16px 18px;border:1px solid var(--line);border-radius:16px;background:rgba(18,24,32,.75);color:#c7ced2;font-size:13px;line-height:1.8}
 .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.card{padding:18px;border:1px solid var(--line);border-radius:16px;background:linear-gradient(180deg,var(--surface2),var(--surface));box-shadow:0 12px 28px rgba(0,0,0,.16)}.card h2{margin:0 0 10px;color:var(--moon);font-size:18px}.card p{margin:0;color:#c6cdd1;font-size:12px;line-height:1.8}.facts{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:12px}.fact{padding:10px;border:1px solid rgba(143,180,201,.12);border-radius:11px;background:rgba(7,10,13,.2)}.fact b{display:block;color:#dce7ec;font-size:12px;margin-bottom:4px}.fact span{color:#96a2a9;font-size:11px;line-height:1.5}
-.months{display:grid;grid-template-columns:repeat(6,1fr);gap:8px}.month{padding:10px 8px;text-align:center;border:1px solid rgba(143,180,201,.13);border-radius:11px;background:rgba(8,12,16,.2)}.month b{display:block;color:#e4edf0;font-size:12px}.month small{display:block;color:#8e999f;margin-top:3px;font-size:9px}
+.months{display:grid;grid-template-columns:repeat(6,1fr);gap:8px}.month{padding:10px 8px;text-align:center;border:1px solid rgba(143,180,201,.13);border-radius:11px;background:rgba(8,12,16,.2);color:inherit;font:inherit;cursor:pointer}.month:hover,.month.selected{border-color:rgba(143,180,201,.52);background:rgba(31,46,58,.66)}.month.current{box-shadow:0 0 0 2px rgba(143,180,201,.26)}.month.leap{border-style:dashed}.month b{display:block;color:#e4edf0;font-size:12px}.month small{display:block;color:#8e999f;margin-top:3px;font-size:9px}.month-detail{margin-top:12px;padding:14px;border:1px solid rgba(143,180,201,.16);border-radius:13px;background:rgba(7,10,13,.2)}.month-detail h3{margin:0 0 10px;color:var(--moon);font-size:16px}.month-detail-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}.month-detail-grid .fact{margin:0}
 footer{display:flex;justify-content:center;gap:8px;margin-top:36px;padding-top:18px;border-top:1px solid var(--line);color:#7f8990;font-size:11px}footer a{color:inherit;text-decoration:none}
 .error{padding:14px;border:1px solid #6c3c3c;border-radius:12px;color:#e2b9b9}
-@media(max-width:760px){.live{grid-template-columns:1fr}.cell+.cell{border-left:0;border-top:1px solid rgba(143,180,201,.14)}.grid{grid-template-columns:1fr}.months{grid-template-columns:repeat(4,1fr)}}
+@media(max-width:760px){.live{grid-template-columns:1fr}.cell+.cell{border-left:0;border-top:1px solid rgba(143,180,201,.14)}.grid{grid-template-columns:1fr}.months{grid-template-columns:repeat(4,1fr)}.month-detail-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:520px){.page{padding-left:13px;padding-right:13px}.mark{width:50px;height:50px}.months{grid-template-columns:repeat(3,1fr)}}
 </style>
 </head>
@@ -57,7 +57,7 @@ footer{display:flex;justify-content:center;gap:8px;margin-top:36px;padding-top:1
   <article class="card"><h2>大小月</h2><p id="monthLength"></p><div class="facts" id="monthLengthFacts"></div></article>
   <article class="card"><h2>月相</h2><div class="facts" id="phases"></div></article>
   <article class="card"><h2>闰月</h2><p id="leapWhy"></p><div class="facts" id="leapFacts"></div></article>
-  <article class="card" style="grid-column:1/-1"><h2>十二个月</h2><div class="months" id="months"></div></article>
+  <article class="card" style="grid-column:1/-1"><h2>本年农历月份</h2><p id="monthsIntro">按本年实际历法显示12个月；如有闰月，会插入成为第13个月。</p><div class="months" id="months"></div><div class="month-detail" id="monthDetail"></div></article>
   <article class="card"><h2>日期怎么读</h2><div class="facts" id="dayNames"></div></article>
   <article class="card"><h2>农历与太阳系统</h2><div class="facts" id="comparisons"></div></article>
 </section>
@@ -87,18 +87,53 @@ footer{display:flex;justify-content:center;gap:8px;margin-top:36px;padding-top:1
       '<div class="fact"><b>为什么要闰月</b><span>'+data.leapMonth.concept+'</span></div>',
       '<div class="fact"><b>如何命名</b><span>'+data.leapMonth.naming+'</span></div>',
       '<div class="fact"><b>与中气的关系</b><span>'+data.leapMonth.zhongqiRelation+'</span></div>',
+      '<div class="fact"><b>计算例子</b><span>'+data.leapMonth.zhongqiExample+'</span></div>',
       '<div class="fact"><b>不能固定推算</b><span>'+data.leapMonth.caution+'</span></div>'
     ].join("");
-    $("months").innerHTML=data.months.map(x=>'<div class="month"><b>'+x.name+'</b><small>'+x.number+'月</small></div>').join("");
     $("dayNames").innerHTML=data.dayNaming.groups.map(x=>'<div class="fact"><b>'+x.pattern+'</b><span>'+x.note+'</span></div>').join("");
     $("comparisons").innerHTML=data.comparisons.map(x=>'<div class="fact"><b>'+x.a+' vs '+x.b+'</b><span>'+x.difference+'</span></div>').join("");
   }
 
+  let cal=null,currentInfo=null,selectedMonthRaw=null;
+  function renderMonthDetail(item){
+    if(!item)return;
+    const base=data.months.find(x=>x.number===item.monthNumber);
+    const festivals=(data.festivals||[]).filter(f=>{
+      const n=base?.number;
+      return (n===1&&/正月/.test(f.dateRule))||(n===5&&/五月/.test(f.dateRule))||(n===7&&/七月/.test(f.dateRule))||(n===8&&/八月/.test(f.dateRule))||(n===9&&/九月/.test(f.dateRule))||(n===12&&/腊月/.test(f.dateRule));
+    });
+    $("monthDetail").innerHTML='<h3>'+(item.isLeap?'闰':'')+(base?.name||item.monthNumber+"月")+' · '+(base?.seasonName||"")+'</h3>'+
+      '<div class="month-detail-grid">'+
+      '<div class="fact"><b>本月天数</b><span>'+item.days+'天 · '+(item.days===30?'大月':'小月')+'</span></div>'+
+      '<div class="fact"><b>公历范围</b><span>'+item.solarStart+' ～ '+item.solarEnd+'</span></div>'+
+      '<div class="fact"><b>中气</b><span>'+(item.zhongQi?item.zhongQi.name+' · '+item.zhongQi.solar:'本月没有中气')+'</span></div>'+
+      '<div class="fact"><b>月份性质</b><span>'+(item.isLeap?'闰月：沿用前一个月月名':'普通农历月')+'</span></div>'+
+      '</div>'+
+      '<p style="margin-top:12px">'+(base?.note||"")+(festivals.length?' 相关节日：'+festivals.map(x=>x.name+'（'+x.dateRule+'）').join('、')+'。':'')+'</p>';
+  }
+  function renderYearMonths(){
+    const months=cal.yearMonths(currentInfo.year);
+    $("monthsIntro").textContent=currentInfo.year+'农历年实际共有'+months.length+'个月'+(months.length===13?'，含闰月。':'。');
+    $("months").innerHTML=months.map(item=>{
+      const base=data.months.find(x=>x.number===item.monthNumber);
+      const current=item.month===currentInfo.monthRaw;
+      const selected=item.month===selectedMonthRaw;
+      return '<button type="button" class="month'+(current?' current':'')+(selected?' selected':'')+(item.isLeap?' leap':'')+'" data-month="'+item.month+'"><b>'+(item.isLeap?'闰':'')+(base?.name||item.monthNumber+"月")+'</b><small>'+(base?.seasonName||"")+' · '+item.days+'天</small></button>';
+    }).join("");
+    $("months").querySelectorAll(".month").forEach(btn=>btn.addEventListener("click",()=>{
+      selectedMonthRaw=Number(btn.dataset.month);
+      renderYearMonths();
+      renderMonthDetail(cal.getMonthInfo(currentInfo.year,selectedMonthRaw));
+    }));
+    renderMonthDetail(cal.getMonthInfo(currentInfo.year,selectedMonthRaw));
+  }
   function renderToday(){
     if(typeof Solar==="undefined")return;
-    const cal=new NongliCalendar(engine);
+    cal=new NongliCalendar(engine);
     const now=new Date();
     const info=cal.fromDate(now);
+    currentInfo=info;
+    if(selectedMonthRaw===null)selectedMonthRaw=info.monthRaw;
     const leap=cal.leapMonth(info.year);
     $("solarDate").textContent=now.toLocaleDateString("zh-CN",{year:"numeric",month:"long",day:"numeric",weekday:"short"});
     $("timezone").textContent=(Intl.DateTimeFormat().resolvedOptions().timeZone||"设备本地时区")+" · "+now.toLocaleTimeString("zh-CN",{hour12:false});
@@ -106,6 +141,7 @@ footer{display:flex;justify-content:center;gap:8px;margin-top:36px;padding-top:1
     $("lunarInfo").textContent=(info.ganZhiYear?info.ganZhiYear+"年 · ":"")+(info.zodiac?info.zodiac+"年 · ":"")+(info.isLeapMonth?"闰月":"普通月");
     $("yearInfo").textContent=leap?"闰年结构":"平年结构";
     $("leapInfo").textContent=leap?"本年有闰月：闰"+Math.abs(leap)+"月":"本年无闰月";
+    renderYearMonths();
   }
 
   renderKnowledge();
