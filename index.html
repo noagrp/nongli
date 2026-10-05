@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0b1015">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="农历">
+<link rel="manifest" href="./manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="32x32" href="./favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="./icon-192.png">
+<link rel="icon" type="image/png" sizes="512x512" href="./icon-512.png">
+<link rel="apple-touch-icon" href="./apple-touch-icon.png">
+<title>农历</title>
+<style>
+:root{--bg:#080b0e;--bg2:#0d1217;--surface:#121820;--surface2:#18212a;--text:#edf1f2;--muted:#96a0a7;--moon:#d8e2e7;--blue:#8fb4c9;--line:rgba(143,180,201,.22);--shadow:0 18px 48px rgba(0,0,0,.28)}
+*{box-sizing:border-box}
+html{background:var(--bg)}
+body{margin:0;min-height:100vh;color:var(--text);font-family:"Noto Serif SC","Songti SC","Microsoft YaHei",system-ui,-apple-system,sans-serif;background:radial-gradient(circle at 10% 0%,rgba(143,180,201,.10),transparent 28rem),radial-gradient(circle at 90% 18%,rgba(215,225,230,.06),transparent 24rem),linear-gradient(180deg,var(--bg2),var(--bg))}
+.page{width:min(1220px,100%);margin:auto;padding:max(28px,env(safe-area-inset-top)) max(18px,env(safe-area-inset-right)) max(30px,env(safe-area-inset-bottom)) max(18px,env(safe-area-inset-left))}
+header{display:flex;justify-content:space-between;align-items:center;gap:18px;padding-bottom:18px;margin-bottom:24px;border-bottom:1px solid var(--line)}
+.brand{display:flex;align-items:center;gap:14px}.mark{width:56px;height:56px;display:grid;place-items:center;border-radius:17px;border:1px solid rgba(143,180,201,.5);background:rgba(90,120,140,.13);color:var(--moon);font-size:28px;font-weight:800}
+h1{margin:0;color:var(--moon);font-size:clamp(28px,4vw,42px)}.sub{margin:5px 0 0;color:var(--muted);font-size:12px}.back{color:var(--muted);text-decoration:none;font-size:12px}.back:hover{color:white}
+.section-title{margin:0 0 12px;color:var(--moon);font-size:18px}
+.live{display:grid;grid-template-columns:1.1fr 1fr 1fr;gap:12px;margin-bottom:24px;padding:18px;border:1px solid rgba(143,180,201,.34);border-radius:20px;background:linear-gradient(180deg,#101923,#0b1118);box-shadow:var(--shadow)}
+.cell{padding:8px 10px;min-width:0}.cell+.cell{border-left:1px solid rgba(143,180,201,.14)}.label{display:block;margin-bottom:6px;color:#8297a4;font-size:11px;letter-spacing:.12em}.main{font-size:clamp(23px,3vw,31px);font-weight:800}.minor{margin-top:5px;color:#91a2ac;font-size:12px;line-height:1.55}
+.intro{margin:0 0 22px;padding:16px 18px;border:1px solid var(--line);border-radius:16px;background:rgba(18,24,32,.75);color:#c7ced2;font-size:13px;line-height:1.8}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.card{padding:18px;border:1px solid var(--line);border-radius:16px;background:linear-gradient(180deg,var(--surface2),var(--surface));box-shadow:0 12px 28px rgba(0,0,0,.16)}.card h2{margin:0 0 10px;color:var(--moon);font-size:18px}.card p{margin:0;color:#c6cdd1;font-size:12px;line-height:1.8}.facts{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:12px}.fact{padding:10px;border:1px solid rgba(143,180,201,.12);border-radius:11px;background:rgba(7,10,13,.2)}.fact b{display:block;color:#dce7ec;font-size:12px;margin-bottom:4px}.fact span{color:#96a2a9;font-size:11px;line-height:1.5}
+.months{display:grid;grid-template-columns:repeat(6,1fr);gap:8px}.month{padding:10px 8px;text-align:center;border:1px solid rgba(143,180,201,.13);border-radius:11px;background:rgba(8,12,16,.2)}.month b{display:block;color:#e4edf0;font-size:12px}.month small{display:block;color:#8e999f;margin-top:3px;font-size:9px}
+footer{display:flex;justify-content:center;gap:8px;margin-top:36px;padding-top:18px;border-top:1px solid var(--line);color:#7f8990;font-size:11px}footer a{color:inherit;text-decoration:none}
+.error{padding:14px;border:1px solid #6c3c3c;border-radius:12px;color:#e2b9b9}
+@media(max-width:760px){.live{grid-template-columns:1fr}.cell+.cell{border-left:0;border-top:1px solid rgba(143,180,201,.14)}.grid{grid-template-columns:1fr}.months{grid-template-columns:repeat(4,1fr)}}
+@media(max-width:520px){.page{padding-left:13px;padding-right:13px}.mark{width:50px;height:50px}.months{grid-template-columns:repeat(3,1fr)}}
+</style>
+</head>
+<body>
+<main class="page">
+<header>
+  <div class="brand"><div class="mark" aria-hidden="true">农</div><div><h1>农历</h1><p class="sub">月相 · 朔望 · 大小月 · 闰月 · 中气 · 农历月日</p></div></div>
+  <a class="back" href="https://noagrp.github.io/zhong/">返回 中</a>
+</header>
+
+<section>
+<h2 class="section-title">今天</h2>
+<div class="live">
+  <div class="cell"><span class="label">公历</span><div class="main" id="solarDate">--</div><div class="minor" id="timezone">设备本地时间</div></div>
+  <div class="cell"><span class="label">农历</span><div class="main" id="lunarDate">--</div><div class="minor" id="lunarInfo">--</div></div>
+  <div class="cell"><span class="label">本年结构</span><div class="main" id="yearInfo">--</div><div class="minor" id="leapInfo">--</div></div>
+</div>
+</section>
+
+<p class="intro">农历的月与日以月亮朔望周期为基础：朔所在日为初一，一个月通常29或30天。为了让月份长期不脱离四季，农历又借助太阳节气中的中气安排闰月，因此它并不是纯阴历，而是阴阳合历。</p>
+
+<section class="grid">
+  <article class="card"><h2>农历的骨架</h2><div class="facts" id="backbone"></div></article>
+  <article class="card"><h2>大小月</h2><p id="monthLength"></p><div class="facts" id="monthLengthFacts"></div></article>
+  <article class="card"><h2>月相</h2><div class="facts" id="phases"></div></article>
+  <article class="card"><h2>闰月</h2><p id="leapWhy"></p><div class="facts" id="leapFacts"></div></article>
+  <article class="card" style="grid-column:1/-1"><h2>十二个月</h2><div class="months" id="months"></div></article>
+  <article class="card"><h2>日期怎么读</h2><div class="facts" id="dayNames"></div></article>
+  <article class="card"><h2>农历与太阳系统</h2><div class="facts" id="comparisons"></div></article>
+</section>
+
+<footer><a href="https://noagrp.github.io/home/">noagrp home</a><span>·</span><a href="https://noagrp.github.io/zhong/">中</a></footer>
+</main>
+
+<script src="./src/lunar-loader.js"></script>
+<script src="./src/nongli-engine.js"></script>
+<script src="./src/nongli-calendar.js"></script>
+<script>
+(async()=>{
+ const $=id=>document.getElementById(id);
+ try{
+  const engine=await loadNongliEngine("./data/nongli.json?v=20261006-1");
+  const data=engine.data;
+  function renderKnowledge(){
+    $("backbone").innerHTML=data.backbone.map(x=>'<div class="fact"><b>'+x.name+' · '+x.role+'</b><span>'+x.detail+'</span></div>').join("");
+    $("monthLength").textContent=data.monthLength.why;
+    $("monthLengthFacts").innerHTML=[
+      '<div class="fact"><b>小月 · 29天</b><span>'+data.monthLength.small.detail+'</span></div>',
+      '<div class="fact"><b>大月 · 30天</b><span>'+data.monthLength.big.detail+'</span></div>'
+    ].join("");
+    $("phases").innerHTML=data.moonPhases.map(x=>'<div class="fact"><b>'+x.name+' · '+x.approxDay+'</b><span>'+x.detail+'</span></div>').join("");
+    $("leapWhy").textContent=data.leapMonth.why;
+    $("leapFacts").innerHTML=[
+      '<div class="fact"><b>为什么要闰月</b><span>'+data.leapMonth.concept+'</span></div>',
+      '<div class="fact"><b>如何命名</b><span>'+data.leapMonth.naming+'</span></div>',
+      '<div class="fact"><b>与中气的关系</b><span>'+data.leapMonth.zhongqiRelation+'</span></div>',
+      '<div class="fact"><b>不能固定推算</b><span>'+data.leapMonth.caution+'</span></div>'
+    ].join("");
+    $("months").innerHTML=data.months.map(x=>'<div class="month"><b>'+x.name+'</b><small>'+x.number+'月</small></div>').join("");
+    $("dayNames").innerHTML=data.dayNaming.groups.map(x=>'<div class="fact"><b>'+x.pattern+'</b><span>'+x.note+'</span></div>').join("");
+    $("comparisons").innerHTML=data.comparisons.map(x=>'<div class="fact"><b>'+x.a+' vs '+x.b+'</b><span>'+x.difference+'</span></div>').join("");
+  }
+
+  function renderToday(){
+    if(typeof Solar==="undefined")return;
+    const cal=new NongliCalendar(engine);
+    const now=new Date();
+    const info=cal.fromDate(now);
+    const leap=cal.leapMonth(info.year);
+    $("solarDate").textContent=now.toLocaleDateString("zh-CN",{year:"numeric",month:"long",day:"numeric",weekday:"short"});
+    $("timezone").textContent=(Intl.DateTimeFormat().resolvedOptions().timeZone||"设备本地时区")+" · "+now.toLocaleTimeString("zh-CN",{hour12:false});
+    $("lunarDate").textContent=info.display;
+    $("lunarInfo").textContent=(info.ganZhiYear?info.ganZhiYear+"年 · ":"")+(info.zodiac?info.zodiac+"年 · ":"")+(info.isLeapMonth?"闰月":"普通月");
+    $("yearInfo").textContent=leap?"闰年结构":"平年结构";
+    $("leapInfo").textContent=leap?"本年有闰月：闰"+Math.abs(leap)+"月":"本年无闰月";
+  }
+
+  renderKnowledge();
+  if(typeof Solar!=="undefined"){renderToday();}
+  else{
+    window.addEventListener("nongli:lunar-ready",renderToday,{once:true});
+    window.addEventListener("nongli:lunar-error",()=>{$("lunarDate").textContent="历法资料载入失败";},{once:true});
+  }
+  if("serviceWorker" in navigator)navigator.serviceWorker.register("./sw.js").catch(()=>{});
+ }catch(e){
+  document.querySelector(".grid").innerHTML='<div class="error">农历资料载入失败，请刷新页面再试。</div>';
+ }
+})();
+</script>
+</body>
+</html>
